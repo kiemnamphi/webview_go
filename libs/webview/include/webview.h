@@ -255,6 +255,14 @@ WEBVIEW_API void *webview_get_native_handle(webview_t w,
 WEBVIEW_API void webview_set_title(webview_t w, const char *title);
 
 /**
+ * Sets the user agent string.
+ *
+ * @param w The webview instance.
+ * @param userAgent The new user agent string.
+ */
+WEBVIEW_API void webview_set_user_agent(webview_t w, const char *userAgent);
+
+/**
  * Updates the size of the native window.
  *
  * @param w The webview instance.
@@ -1001,6 +1009,7 @@ if (status === 0) {\
   void terminate() { terminate_impl(); }
   void dispatch(std::function<void()> f) { dispatch_impl(f); }
   void set_title(const std::string &title) { set_title_impl(title); }
+  void set_user_agent(const std::string &userAgent) { set_user_agent_impl(userAgent); }
 
   void set_size(int width, int height, webview_hint_t hints) {
     set_size_impl(width, height, hints);
@@ -1019,6 +1028,7 @@ protected:
   virtual void terminate_impl() = 0;
   virtual void dispatch_impl(std::function<void()> f) = 0;
   virtual void set_title_impl(const std::string &title) = 0;
+  virtual void set_user_agent_impl(const std::string &userAgent) = 0;
   virtual void set_size_impl(int width, int height, webview_hint_t hints) = 0;
   virtual void set_html_impl(const std::string &html) = 0;
   virtual void init_impl(const std::string &js) = 0;
@@ -1333,6 +1343,12 @@ public:
 
   void set_title_impl(const std::string &title) override {
     gtk_window_set_title(GTK_WINDOW(m_window), title.c_str());
+  }
+
+  void set_user_agent_impl(const std::string &userAgent) override {
+    // For linux - need a linux machine to test this
+    WebKitSettings *settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(m_webview));
+    webkit_settings_set_user_agent(settings, userAgent.c_str());
   }
 
   void set_size_impl(int width, int height, webview_hint_t hints) override {
@@ -1655,6 +1671,16 @@ public:
                                             "stringWithUTF8String:"_sel,
                                             title.c_str()));
   }
+
+  void set_user_agent_impl(const std::string &userAgent) override {
+    objc::autoreleasepool arp;
+
+    auto nsUserAgent = objc::msg_send<id>("NSString"_cls,
+                                          "stringWithUTF8String:"_sel,
+                                          userAgent.c_str());
+    objc::msg_send<void>(m_webview, "setCustomUserAgent:"_sel, nsUserAgent);
+  }
+
   void set_size_impl(int width, int height, webview_hint_t hints) override {
     objc::autoreleasepool arp;
 
@@ -3545,6 +3571,10 @@ WEBVIEW_API void *webview_get_native_handle(webview_t w,
 
 WEBVIEW_API void webview_set_title(webview_t w, const char *title) {
   static_cast<webview::webview *>(w)->set_title(title);
+}
+
+WEBVIEW_API void webview_set_user_agent(webview_t w, const char *userAgent) {
+  static_cast<webview::webview *>(w)->set_user_agent(userAgent);
 }
 
 WEBVIEW_API void webview_set_size(webview_t w, int width, int height,
