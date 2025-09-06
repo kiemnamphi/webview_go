@@ -24,7 +24,9 @@ The `SetUserAgent(string)` method allows you to customize the user agent string 
 - Go 1.13+: `brew install go`
 
 ### Linux
-TBU
+- Go 1.13+: `sudo apt install golang-go` or `sudo yum install golang`
+- WebKit2GTK: `sudo apt install libwebkit2gtk-4.0-dev libgtk-3-dev pkg-config` or `sudo yum install webkit2gtk3-devel gtk3-devel pkgconfig`
+- GTK3 dev libraries: `sudo apt install libgtk-3-dev` or `sudo yum install gtk3-devel`
 
 ## Build Scripts
 
@@ -32,7 +34,7 @@ TBU
 build-macos.sh - run this build script on MacOS to generate executable file **useragent-demo**
 
 ### Linux Build Script
-TBU
+build-linux.sh - run this build script on Linux to generate executable file **useragent-demo**
 
 ## Usage Instructions
 
@@ -52,7 +54,9 @@ TBU
    ```
    
    **On Linux:**
-   TBU
+   ```bash
+   ./build-linux.sh
+   ```
 
 3. **Execute the demo**:
    ```bash

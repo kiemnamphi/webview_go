@@ -17,7 +17,7 @@ echo "No dependencies needed for macOS"
 echo ""
 
 echo "Building executable..."
-go build -o useragent-demo examples/useragent/main.go
+CGO_ENABLED=1 go build -o useragent-demo examples/useragent/main.go
 
 echo ""
 echo "Build completed successfully!"
@@ -30,4 +30,3 @@ echo "Expected behavior:"
 echo "   - Opens a window titled 'Basic Example'"
 echo "   - Navigates to https://useragentstring.com/ for user agent detection"
 echo "   - Displays the custom user agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari'"
-
